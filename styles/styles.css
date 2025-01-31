@@ -1,7 +1,6 @@
 body
 {
-    background-image: url(../assets/pokeballBackground.jpg);
-    background-repeat: no-repeat;
+    background-image: url(../assets/background.webp);
     background-size: cover;
     font-family: "Inria Serif", static;
     font-weight: 400;
@@ -9,7 +8,7 @@ body
 
 .container
 {
-    background-color: #fdf2aba1;
+    background-color: #a8c1ea7f;
     border-radius: 30px;
     filter: drop-shadow(5px 4px 4px #2e2e2e);
     border-style: solid;
@@ -22,7 +21,7 @@ h1
 
 h2
 {
-    font-size: 32px;
+    font-size: 34px;
 }
 
 img
@@ -30,3 +29,28 @@ img
     filter: drop-shadow(5px 4px 4px #2e2e2e);
 }
 
+/* Types */
+
+.rock
+{
+    border-radius: 10rem;
+    color: white;
+    font-weight: 100!important;
+    background: rgba(45, 9, 9, 0.532);
+    display: flex;
+    justify-content: center;
+    width: 100px;
+    height: 55px;
+}
+
+.fire
+{
+    border-radius: 10rem;
+    color: white;
+    font-weight: 100!important;
+    background: rgba(191, 15, 15, 0.885);
+    display: flex;
+    justify-content: center;
+    width: 7rem;
+    height: 3%;
+}
