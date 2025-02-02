@@ -35,17 +35,15 @@ let grabEvolutionChainAPI = async (pokemonName) =>
         function grabEvolutions(chain)
         {
             let evolutionList = [];
-        
             let currentStage = [chain];
         
             while (currentStage.length > 0)
              {
                 let nextStage = [];
-        
                 for (let evolution of currentStage)
                 {
                     evolutionList.push(evolution.species.name);
-        
+                    
                     for (let nextEvo of evolution.evolves_to)
                     {
                         nextStage.push(nextEvo);

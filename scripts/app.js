@@ -8,6 +8,7 @@ let favoritesButton = document.getElementById("favoritesButton")
 let searchBarButton = document.getElementById("searchBarButton")
 let searchBarInput = document.getElementById("searchBarInput")
 let shinyToggleButton = document.getElementById("shinyToggleButton");
+let randomButton = document.getElementById("randomButton");
 
 let pokeIndexNum = document.getElementById("pokeIndexNum")
 let pokemonImage = document.getElementById("pokemonImage")
@@ -21,20 +22,36 @@ let eve2 = document.getElementById("eve2")
 
 let typeList1 = document.getElementById("typeList1")
 let typeList2 = document.getElementById("typeList2")
-let favoritesList = document.getElementById("favoritesList")
 
 favoritesButton.addEventListener
 
 // Variables
-let userInput = "";
+// let userInput = "";
 let pokemon = [];
 let isShiny = false;
 
+randomButton.addEventListener("click", async () => 
+{
+    let randomId = Math.floor(Math.random() * 649) + 1; // Generate random ID (1-649)
 
-// UI Change
+        // Fetch Pokémon data
+        pokemon = await grabPokemonAPI(randomId);        
+
+        console.log(`Random Pokémon ID: ${randomId}`, pokemon);
+
+        let evolutionChain = await grabEvolutionChainAPI(randomId);
+        console.log("Evolution Chain:", evolutionChain);
+
+        await grabPokemonLocationAPI(randomId);
+
+        // Update UI
+        updatePokemonDisplay(pokemon);
+        updateEvolutionUI(evolutionChain, pokemon);
+});
+// ---------------------------------- Search Button ----------------------------------
 searchBarButton.addEventListener("click", async () =>
 {
-    let searchedPokemon = searchBarInput.value.trim().toLowerCase().toUpperCase(); 
+    let searchedPokemon = searchBarInput.value.trim().toLowerCase(); 
     pokemon = await grabPokemonAPI(searchedPokemon);
     console.log(searchedPokemon);
     
@@ -48,81 +65,86 @@ searchBarButton.addEventListener("click", async () =>
         alert("Please enter a pokemon from gen 1-5 (1-649)")
         return;
     }
-        //---------------------------------------------------------------- DOM Updates ----------------------------------------------------------------
-        
-    // Id Updates
-    pokemonName.innerText = `${pokemon.species.name}`;
-    pokeIndexNum.innerText = `#${pokemon.id}`;
-    pokemonImage.src = `${pokemon.sprites.front_default}`;
-    displayPokemonMoves(pokemon.moves);
+
+
+    updatePokemonDisplay(pokemon);
+    updateEvolutionUI(evolutionChain, pokemon);
     await grabPokemonLocationAPI(pokemon.id); 
+        //-------------------------- DOM Updates --------------------------
+    // pokemonName.innerText = `${pokemon.species.name}`;
+    // pokeIndexNum.innerText = `#${pokemon.id}`;
+    // pokemonImage.src = pokemon.sprites.other["official-artwork"].front_default;
+    // displayPokemonMoves(pokemon.moves);
+    // await grabPokemonLocationAPI(pokemon.id); 
+    
+    // // Get Types 
+    // let types = pokemon.types;
 
-    // Get Types 
-    let types = pokemon.types;
+    // if (types.length === 1)
+    // {
+    //     typeList1.innerText = `${pokemon.types[0].type.name}`;
+    //     typeList2.innerText = "";
+    // }
+    // else
+    // {
+    //     typeList1.innerText = `${pokemon.types[0].type.name}`;
+    //     typeList2.innerText = `${pokemon.types[1].type.name}`;
+    //     typeList1.parentElement.classList.add("flex", "gap-10");
+    // }
 
-    if (types.length === 1)
-    {
-        typeList1.innerText = `${pokemon.types[0].type.name}`;
-        typeList2.innerText = "";
+    // // Get abilities
+    // let abilities = pokemon.abilities;
 
-    }
-    else
-    {
-        typeList1.innerText = `${pokemon.types[0].type.name}`;
-        typeList2.innerText = `${pokemon.types[1].type.name}`;
-        typeList1.parentElement.classList.add("flex", "gap-10");
+    // switch (abilities.length) 
+    // {
+    //     case 3:
+    //         ability1.innerText = abilities[0].ability.name;
+    //         ability2.innerText = abilities[1].ability.name;
+    //         ability3.innerText = abilities[2].ability.name;
+    //         break;
 
-    }
+    //     case 2:
+    //         ability1.innerText = abilities[0].ability.name;
+    //         ability2.innerText = abilities[1].ability.name;
+    //         ability3.style.display = "none";
+    //         break;
 
-    // Get abilities
-    let abilities = pokemon.abilities;
+    //     case 1:
+    //         ability1.innerText = abilities[0].ability.name;
+    //         ability2.style.display = "none"; 
+    //         ability3.style.display = "none"; 
+    //         break;
 
-    switch (abilities.length) 
-    {
-        case 3:
-            ability1.innerText = abilities[0].ability.name;
-            ability2.innerText = abilities[1].ability.name;
-            ability3.innerText = abilities[2].ability.name;
-            break;
-
-        case 2:
-            ability1.innerText = abilities[0].ability.name;
-            ability2.innerText = abilities[1].ability.name;
-            ability3.style.display = "none";
-            break;
-
-        case 1:
-            ability1.innerText = abilities[0].ability.name;
-            ability2.style.display = "none"; 
-            ability3.style.display = "none"; 
-            break;
-
-        default:
-            ability1.innerText = "This Pokémon has no abilities";
-            ability2.style.display = "none";
-            ability3.style.display = "none";
-            break;
-    }
-    updateEvolutionUI(evolutionChain, searchedPokemon);
+    //     default:
+    //         ability1.innerText = "This Pokémon has no abilities";
+    //         ability2.style.display = "none";
+    //         ability3.style.display = "none";
+    //         break;
+    // }
+    // updateEvolutionUI(evolutionChain, searchedPokemon);
 });
-
+// Search bar 
 searchBarInput.addEventListener("click", async () =>
 {
     userInput = searchBarInput.value;
     console.log(userInput);
 });
 
-//----------------------- Load favorites from localStorage -----------------------
+//----------------------- favorites from localStorage -----------------------
 let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
 
 favoritesButton.addEventListener("click", () => 
 {
-    if (!pokemon || !pokemon.species) return;
+    if (!pokemon || !pokemon.species) 
+    {
+        return;
+    }
 
-    let favoritePokemon = {
+    let favoritePokemon = 
+    {
         name: pokemon.species.name,
         id: pokemon.id,
-        image: pokemon.sprites.front_default
+        image: pokemon.sprites.other["official-artwork"].front_default
     };
 
     if (!favorites.some(p => p.id === favoritePokemon.id)) 
@@ -141,7 +163,6 @@ favoritesButton.addEventListener("click", () =>
 });
 //---------------------------------------------- Functions ----------------------------------------------
 
-// display favorites list
 function displayFavorites() 
 {
     let favoritesList = document.getElementById("favoritesList");
@@ -182,26 +203,18 @@ async function loadFavoritePokemon(pokemonId)
 
 document.addEventListener("DOMContentLoaded", displayFavorites);
 
+// -------------------------------------- Main UI Update --------------------------------------
 function updatePokemonDisplay(pokemon) 
 {
-    if (!pokemon || !pokemon.species) 
-    {
-        return;
-    }
-
-    if (!pokemon || !pokemon.sprites)
-    {
-        return;
-    } 
     // Shiny
-    let normalSprite = pokemon.sprites.front_default;
-    let shinySprite = pokemon.sprites.front_shiny;
+    let normalSprite = pokemon.sprites.other["official-artwork"].front_default;
+    let shinySprite = pokemon.sprites.other["official-artwork"].front_shiny;
 
-    pokemonImage.src = isShiny ? shinySprite : normalSprite;
+    pokemonImage.src = isShiny ? shinySprite : normalSprite; // tenerim shiny toggle
 
     shinyToggleButton.onclick = () => 
     {
-        isShiny = !isShiny; // Toggle state
+        isShiny = !isShiny; 
         pokemonImage.src = isShiny ? shinySprite : normalSprite;
         shinyToggleButton.innerText = isShiny ? "Show Normal" : "Show Shiny";
     };
@@ -209,18 +222,78 @@ function updatePokemonDisplay(pokemon)
     // Update Poke 
     pokemonName.innerText = capitalizeWords(pokemon.species.name);
     pokeIndexNum.innerText = `#${pokemon.id}`;
-    pokemonImage.src = pokemon.sprites.front_default;
 
     // Update Types
-    if (pokemon.types.length === 1) 
+    function applyBackgroundOpacity(hex, opacity) // for background opacity
     {
-        typeList1.innerText = capitalizeWords(pokemon.types[0].type.name);
-        typeList2.innerText = "";
+        let r = parseInt(hex.slice(1, 3), 16);
+        let g = parseInt(hex.slice(3, 5), 16);
+        let b = parseInt(hex.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+    }
+
+    // Get Pokémon types
+    let types = pokemon.types.map(t => t.type.name.toLowerCase());
+
+    typeList1.className = "type";
+    typeList2.className = "type";
+
+    // Type Colors
+    const typeColors = 
+    {
+        normal: {bg: "#A8A77A", text: "#FFFFFF"},
+        fire: {bg: "#EE8130", text: "#FFFFFF"},
+        water: { bg: "#6390F0", text: "#FFFFFF" },
+        electric: { bg: "#F7D02C", text: "#000000" },
+        grass: { bg: "#7AC74C", text: "#FFFFFF" },
+        ice: { bg: "#96D9D6", text: "#000000" },
+        fighting: { bg: "#C22E28", text: "#FFFFFF" },
+        poison: { bg: "#A33EA1", text: "#FFFFFF" },
+        ground: { bg: "#E2BF65", text: "#000000" },
+        flying: { bg: "#A98FF3", text: "#000000" },
+        psychic: { bg: "#F95587", text: "#FFFFFF" },
+        bug: { bg: "#A6B91A", text: "#FFFFFF" },
+        rock: { bg: "#B6A136", text: "#FFFFFF" },
+        ghost: { bg: "#735797", text: "#FFFFFF" },
+        dragon: { bg: "#6F35FC", text: "#FFFFFF" },
+        dark: { bg: "#705746", text: "#FFFFFF" },
+        steel: { bg: "#B7B7CE", text: "#000000" },
+        fairy: { bg: "#D685AD", text: "#000000" },
+    };
+    let containers = document.querySelectorAll(".container");
+
+    
+    let primaryTypeColor = typeColors[types[0]]?.bg || "#a8c1ea"; // Default color
+    let transparentBackground = applyBackgroundOpacity(primaryTypeColor, 0.7);
+
+    containers.forEach(container => 
+    {
+        container.style.backgroundColor = transparentBackground;
+    });
+
+    // Apply the first type color ONLY
+    if (types.length > 0) 
+    {
+        let { bg, text } = typeColors[types[0]] || { bg: "#000000", text: "#FFFFFF" };
+        typeList1.innerText = capitalizeWords(types[0]);
+        typeList1.style.backgroundColor = bg;
+        typeList1.style.color = text;
+    }
+    
+    if (types.length > 1) 
+    {
+        let {bg, text} = typeColors[types[1]] || {bg: "#000000", text: "#FFFFFF"};
+
+        typeList2.innerText = capitalizeWords(types[1]);
+        typeList2.style.backgroundColor = bg;
+        typeList2.style.color = text;
+        typeList2.style.display = "inline-block"; 
+
+        typeList1.parentElement.classList.add("flex", "gap-10");
     } else 
     {
-        typeList1.innerText = capitalizeWords(pokemon.types[0].type.name);
-        typeList2.innerText = capitalizeWords(pokemon.types[1].type.name);
-        typeList1.parentElement.classList.add("flex", "gap-10");
+        typeList2.innerText = ""; 
+        typeList2.style.display = "none"; 
     }
 
     // Update Abilities
@@ -232,6 +305,7 @@ function updatePokemonDisplay(pokemon)
     ability2.style.display = abilities.length > 1 ? "block" : "none";
     ability3.style.display = abilities.length > 2 ? "block" : "none";
 
+    // Evo Chain
     grabEvolutionChainAPI(pokemon.id).then(evolutionChain => 
     {
         updateEvolutionUI(evolutionChain, pokemon.species.name);
@@ -242,41 +316,43 @@ function updatePokemonDisplay(pokemon)
 
 async function updateEvolutionUI(evolutionChain, searchedPokemon) 
 {
-
-    pokemon = await grabPokemonAPI(searchedPokemon);
-
     eve1.innerText = "";
     eve2.innerText = "";
     eve1png.src = "";
     eve2png.src = "";
 
+    // No evolution data is available
     if (!evolutionChain || evolutionChain.length === 0) 
     {
-        eve1.innerText = "No evolution data available";
+        eve1.innerText = "NA";
         eve1png.style.display = "none";
         eve2.innerText = "";
         eve2png.style.display = "none";
         return;
     }
 
-    // Prevent dupe
-    let evoChainFilter = evolutionChain.filter(name => name !== searchedPokemon.toLowerCase());
+    let evoChainFilter = evolutionChain.filter(name => typeof name === "string" && name.toLowerCase() !== searchedPokemon.toLowerCase());
 
+    // Fetch data for the first evolution Pokémon
     if (evoChainFilter.length > 0) 
     {
+        const pokemon1 = await grabPokemonAPI(evoChainFilter[0]); 
         eve1.innerText = capitalizeWords(evoChainFilter[0]);
-        eve1png.src = `https://img.pokemondb.net/sprites/home/normal/${evoChainFilter[0]}.png`;
+        eve1png.src = pokemon1.sprites.other["official-artwork"].front_default; 
         eve1png.style.display = "block";
+        // eve1.parentElement.classList.add("flex", "justify-center", "items-center", "flex-col");
     } else 
     {
         eve1.innerText = "";
         eve1png.style.display = "none";
     }
 
+    // Fetch data for the second evolution Pokémon
     if (evoChainFilter.length > 1) 
     {
+        const pokemon2 = await grabPokemonAPI(evoChainFilter[1]); 
         eve2.innerText = capitalizeWords(evoChainFilter[1]);
-        eve2png.src = `https://img.pokemondb.net/sprites/home/normal/${evoChainFilter[1]}.png`;
+        eve2png.src = pokemon2.sprites.other["official-artwork"].front_default; 
         eve2png.style.display = "block";
     } else 
     {
@@ -287,6 +363,7 @@ async function updateEvolutionUI(evolutionChain, searchedPokemon)
 
 function displayPokemonMoves(moves) 
 {
+    
     moveList1.innerHTML = "";
     moveList2.innerHTML = "";
 

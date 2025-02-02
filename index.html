@@ -12,14 +12,14 @@
     <title>Pokedex Gen 1-5</title>
 </head>
 <body>
-    <header class="flex justify-center text-7xl sm:text-7xl sm:justify-start p-2 text-white">
+    <header class="flex justify-center text-7xl sm:text-7xl sm:justify-start p-2">
         Pokedex Gen [1-5]
     </header>
 
 
         <div class="relative group flex items-center space-x-4 justify-center pb-3">
             <!-- Favorites Button -->
-            <img src="./assets/star-1.png" class="cursor-pointer w-8 h-8" alt="Favorite List">
+            <img src="./assets/star-1.png" class="cursor-pointer hover:scale-110  transition-all duration-200 w-8 h-8" alt="Favorite List">
             <!-- Hover List (Dropdown) -->
             <ul id="favoritesList" 
             class="absolute left-50 mt-20 w-40 bg-white border border-gray-300 shadow-md rounded-lg p-2 
@@ -36,12 +36,14 @@
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
                     </svg>
                 </div>
-                <input type="search" id="searchBarInput" class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search Pokemon by ID or Name Here" required />
+                <input type="search" id="searchBarInput" class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-200 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search Pokemon by ID or Name Here" required />
                 <button id="searchBarButton" type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Search</button>
             </div>
         </form>
+        <button type="button" id="randomButton" class="py-2.5 px-5 me-2 mb-2 text-sm font-medium text-gray-900 focus:outline-none bg-amber-300 rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">Randomize</button>
     </div>
-    </div>
+
+    
     
     <!-- Main Container -->
      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4">
@@ -58,35 +60,38 @@
     <div class="container row-span-2 ">
         <div class="flex justify-between">
             <div class="flex items-center">
-                <img src="./assets/pokeball.png" id="favoritesButton" class="cursor-pointer w-20 h-20" alt="Favorite List">    
-                <img src="./assets/sparkle.png" id="shinyToggleButton" class="mt-5 h-10 w-10 cursor-pointer" alt="shinyIcon">
+                <img src="./assets/pokeball.png" id="favoritesButton" class="cursor-pointer w-20 h-20 hover:scale-110  transition-all duration-200"
+                alt="Favorite List">    
+                <img src="./assets/sparkle.png" id="shinyToggleButton"  class="mt-5 h-10 w-10 cursor-pointer hover:scale-110  transition-all duration-200" alt="shinyIcon">
             </div>
             <!-- <button class="bg-amber-100 rounded-10xl"id="shinyToggleButton">Show Shiny</button> -->
-            <h2 id="pokeIndexNum" class="px-5 py-5"> #278</h2>
+            <h2 id="pokeIndexNum" class="px-5 py-5"> pokeID</h2>
         </div>
 
         <div class="relative flex flex-col items-center justify-center text-center">
-            <img id="pokemonImage" class="w-100 h-100 p-0"  src="./assets/248.png" alt="pokemonPng">
-            <h1 id="pokemonName" class="flex justify-center text-5xl">Tyranitar</h1>    
+            <img id="pokemonImage" class="w-100 h-100 sm:ps-9" alt="">
+            <h1 id="pokemonName" class="flex justify-center text-5xl"></h1>    
         </div>
         <!-- Types -->
-        <ul class="text-3xl font-sans flex justify-center">
-                <li id="typeList1">Rock</li>
-                <li id="typeList2">Dark</li>
+        <ul class="text-3xl font-sans flex justify-center pb-10">
+                <li id="typeList1"></li>
+                <li id="typeList2"></li>
             </ul>
 
-        <div class="grid grid-cols-2">
-            <div class="place-items-center">
-                <img id="eve1png" class="w-55 h-55" src="./assets/246.png" alt="evolutin 1">
-                <h2 id="eve1"> Larvitar</h2>
+            <div class="flex justify-around">
+                <!-- Evolution 1 -->
+                <div class="flex flex-col items-center text-center">
+                    <img id="eve1png" class="w-40 h-40" alt="">
+                    <h2 id="eve1" class="mt-2 text-lg"></h2>
+                </div>
+            
+                <!-- Evolution 2 -->
+                <div class="flex flex-col items-center text-center">
+                    <img id="eve2png" class="w-40 h-40" alt="">
+                    <h2 id="eve2" class="mt-2 text-lg"></h2>
+                </div>
             </div>
-
-
-            <div class="place-items-center">
-                <img id="eve2png" class="w-55 h-55 col-2" src="./assets/247.png" alt="evolutin 2">
-                <h2 id="eve2"> Pupitar</h2>
-            </div>
-        </div>
+            
     </div> 
     
     <!-- Container 3 -->
@@ -100,7 +105,7 @@
 <!-- Container 4 -->
     <div class="container">
         <h1 class="flex justify-center ">Location</h1>
-        <h2 id="pokeLoction" class="flex justify-center pt-10"> PLACEHOLDER
+        <h2 id="pokeLoction" class="flex justify-center pt-10"> 
         </h2>
     </div>
 </div>
