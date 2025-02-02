@@ -6,7 +6,8 @@ body
     font-weight: 400;
 }
 
-.container {
+.container 
+{
     background-color: #a8c1ea7f;
     border-radius: 30px;
     filter: drop-shadow(5px 4px 4px #2e2e2e);
